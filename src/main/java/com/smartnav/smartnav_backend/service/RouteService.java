@@ -20,4 +20,28 @@ public class RouteService {
     public List<Route> getAllRoutes() {
         return routeRepository.findAll();
     }
+
+    public Route getRouteById(Long id) {
+        return routeRepository.findById(id).orElse(null);
+    }
+
+    public Route updateRoute(Long id, Route route) {
+
+        Route existingRoute =
+                routeRepository.findById(id).orElse(null);
+
+        if (existingRoute != null) {
+            existingRoute.setRouteName(route.getRouteName());
+            existingRoute.setSource(route.getSource());
+            existingRoute.setDestination(route.getDestination());
+
+            return routeRepository.save(existingRoute);
+        }
+
+        return null;
+    }
+
+    public void deleteRoute(Long id) {
+        routeRepository.deleteById(id);
+    }
 }
