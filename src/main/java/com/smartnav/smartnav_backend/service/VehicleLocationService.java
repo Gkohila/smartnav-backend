@@ -64,7 +64,23 @@ public class VehicleLocationService {
                         newest.getTimestamp()
                 ).getSeconds();
 
+        System.out.println(
+        "Duration Seconds = "
+                + durationSeconds
+);
+
+        System.out.println(
+        "Creating stop for "
+                + currentLocation.getVehicleNumber()
+);
+
+        System.out.println(
+        "createLearnedStop called : "
+                + durationSeconds
+);
+
         stopService.createLearnedStop(
+                
                 currentLocation.getVehicleNumber(),
                 currentLocation.getVehicleType(),
                 currentLocation.getLatitude(),

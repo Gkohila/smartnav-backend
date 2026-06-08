@@ -35,6 +35,8 @@ public class Stop {
 
     private Integer mainStopCount;
 
+    private Boolean delayDetected;
+
     public Stop() {
     }
 
@@ -136,5 +138,13 @@ public class Stop {
 
     public void setMainStopCount(Integer mainStopCount) {
         this.mainStopCount = mainStopCount;
+    }
+
+    public Boolean getDelayDetected() {
+        return delayDetected;
+    }
+
+    public void setDelayDetected(Boolean delayDetected) {
+        this.delayDetected = delayDetected;
     }
 }

@@ -47,12 +47,18 @@ public class StopService {
 
         if (nearbyStop != null) {
 
-            int visits =
+            int oldVisits =
                     nearbyStop.getVisitCount() == null
-                            ? 1
-                            : nearbyStop.getVisitCount() + 1;
+                            ? 0
+                            : nearbyStop.getVisitCount();
 
-            nearbyStop.setVisitCount(visits);
+            int newVisits = oldVisits + 1;
+
+            nearbyStop.setVisitCount(newVisits);
+
+            nearbyStop.setStopDuration(
+                    stop.getStopDuration()
+            );
 
             String currentType =
                     nearbyStop.getStopType();
@@ -60,7 +66,7 @@ public class StopService {
             if (currentType != null &&
                     currentType.startsWith("TEMP")) {
 
-                if (visits >= 10) {
+                if (newVisits >= 10) {
 
                     nearbyStop.setStopType(
                             currentType.replace(
@@ -71,12 +77,73 @@ public class StopService {
                 }
             }
 
+            /*
+             * Average Stop Time Learning
+             */
+
+            Long currentDuration =
+                    stop.getStopDuration();
+
+            Double oldAverage =
+                    nearbyStop.getAverageStopTime();
+
+            if (oldAverage == null) {
+
+                nearbyStop.setAverageStopTime(
+                        currentDuration.doubleValue()
+                );
+
+            } else {
+
+                double newAverage =
+                        (
+                                (oldAverage * oldVisits)
+                                        + currentDuration
+                        ) / newVisits;
+
+                nearbyStop.setAverageStopTime(
+                        newAverage
+                );
+            }
+
+            /*
+             * Delay Detection V1
+             */
+
+            Double average =
+                    nearbyStop.getAverageStopTime();
+
+            if (average != null &&
+                    currentDuration > average * 2) {
+
+                nearbyStop.setDelayDetected(
+                        true
+                );
+
+            } else {
+
+                nearbyStop.setDelayDetected(
+                        false
+                );
+            }
+
             return stopRepository.save(
                     nearbyStop
             );
         }
 
+        /*
+         * First Visit
+         */
+
         stop.setVisitCount(1);
+
+        stop.setAverageStopTime(
+                stop.getStopDuration()
+                        .doubleValue()
+        );
+
+        stop.setDelayDetected(false);
 
         return stopRepository.save(stop);
     }
@@ -86,32 +153,45 @@ public class StopService {
     }
 
     public Stop createLearnedStop(
-        String vehicleNumber,
-        String vehicleType,
-        Double latitude,
-        Double longitude,
-        long durationSeconds
+            String vehicleNumber,
+            String vehicleType,
+            Double latitude,
+            Double longitude,
+            long durationSeconds
     ) {
 
+        System.out.println(
+                "createLearnedStop called : "
+                        + durationSeconds
+        );
+
         Stop stop = new Stop();
-    
+
         stop.setVehicleNumber(vehicleNumber);
         stop.setVehicleType(vehicleType);
         stop.setLatitude(latitude);
         stop.setLongitude(longitude);
         stop.setStopDuration(durationSeconds);
 
-        if (durationSeconds >= 3 && durationSeconds < 15) {
+        if (durationSeconds >= 3 &&
+                durationSeconds < 15) {
 
-            stop.setStopType("TEMPORARY_MINI_STOP");
+            stop.setStopType(
+                    "TEMPORARY_MINI_STOP"
+            );
 
-        } else if (durationSeconds >= 15 && durationSeconds < 30) {
+        } else if (durationSeconds >= 15 &&
+                durationSeconds < 30) {
 
-            stop.setStopType("TEMPORARY_MAJOR_STOP");
+            stop.setStopType(
+                    "TEMPORARY_MAJOR_STOP"
+            );
 
         } else if (durationSeconds >= 30) {
 
-            stop.setStopType("TEMPORARY_MAIN_STOP");
+            stop.setStopType(
+                    "TEMPORARY_MAIN_STOP"
+            );
 
         } else {
 
