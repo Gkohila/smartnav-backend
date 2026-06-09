@@ -4,6 +4,11 @@ import com.smartnav.smartnav_backend.entity.Stop;
 import com.smartnav.smartnav_backend.repository.StopRepository;
 import org.springframework.stereotype.Service;
 
+import com.smartnav.smartnav_backend.entity.RouteStop;
+import com.smartnav.smartnav_backend.repository.RouteStopRepository;
+
+import com.smartnav.smartnav_backend.service.AlertService;
+
 import java.util.List;
 
 @Service
@@ -12,11 +17,18 @@ public class StopService {
     private static final double STOP_RADIUS_METERS = 10.0;
 
     private final StopRepository stopRepository;
+    private final RouteStopRepository routeStopRepository;
+
+    private final AlertService alertService;
 
     public StopService(
-            StopRepository stopRepository
+            StopRepository stopRepository,
+            RouteStopRepository routeStopRepository,
+            AlertService alertService
     ) {
         this.stopRepository = stopRepository;
+        this.routeStopRepository = routeStopRepository;
+        this.alertService = alertService;
     }
 
     public Stop saveStop(Stop stop) {
@@ -113,18 +125,28 @@ public class StopService {
             Double average =
                     nearbyStop.getAverageStopTime();
 
+            System.out.println("Average = " + average);
+            System.out.println("Current Duration = " + currentDuration);
+
             if (average != null &&
                     currentDuration > average * 2) {
 
-                nearbyStop.setDelayDetected(
-                        true
+                System.out.println("DELAY ALERT GENERATED");
+
+                nearbyStop.setDelayDetected(true);
+
+                alertService.createAlert(
+                        stop.getVehicleNumber(),
+                        "DELAY",
+                        "Bus "
+                                + stop.getVehicleNumber()
+                                + " delayed at "
+                                + nearbyStop.getStopName()
                 );
 
             } else {
 
-                nearbyStop.setDelayDetected(
-                        false
-                );
+                nearbyStop.setDelayDetected(false);
             }
 
             return stopRepository.save(
@@ -171,6 +193,8 @@ public class StopService {
         stop.setVehicleType(vehicleType);
         stop.setLatitude(latitude);
         stop.setLongitude(longitude);
+        String detectedStopName = findNearestRouteStopName(latitude, longitude);
+        stop.setStopName(detectedStopName);
         stop.setStopDuration(durationSeconds);
 
         if (durationSeconds >= 3 &&
@@ -200,6 +224,45 @@ public class StopService {
 
         return saveStop(stop);
     }
+
+    private String findNearestRouteStopName(
+        Double latitude,
+        Double longitude
+        ) {
+
+        List<RouteStop> routeStops =
+            routeStopRepository.findAll();
+
+        RouteStop nearestStop = null;
+
+        double minDistance =
+            Double.MAX_VALUE;
+
+        for (RouteStop stop : routeStops) {
+
+                double distance =
+                        calculateDistanceMeters(
+                                latitude,
+                                longitude,
+                                stop.getLatitude(),
+                                stop.getLongitude()
+                        );
+
+                if (distance < minDistance) {
+
+                        minDistance = distance;
+                        nearestStop = stop;
+                }
+        }
+
+    if (nearestStop != null &&
+            minDistance <= 1000) {
+
+        return nearestStop.getStopName();
+    }
+
+    return "Unknown Stop";
+}
 
     private double calculateDistanceMeters(
             Double lat1,
