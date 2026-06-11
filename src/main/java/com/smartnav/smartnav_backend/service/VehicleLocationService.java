@@ -100,4 +100,12 @@ public class VehicleLocationService {
                 vehicleNumber
         );
     }
+
+    public VehicleLocation getLatestLocation(
+        String vehicleNumber
+    ) {
+        return repository.findTopByVehicleNumberOrderByIdDesc(
+            vehicleNumber
+        );
+    }
 }

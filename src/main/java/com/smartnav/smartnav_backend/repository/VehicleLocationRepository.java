@@ -17,4 +17,8 @@ public interface VehicleLocationRepository
     List<VehicleLocation> findTop10ByVehicleNumberOrderByIdDesc(
             String vehicleNumber
     );
+
+    VehicleLocation findTopByVehicleNumberOrderByIdDesc(
+        String vehicleNumber
+    );
 }

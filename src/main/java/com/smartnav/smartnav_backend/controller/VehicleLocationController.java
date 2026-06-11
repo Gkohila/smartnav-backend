@@ -39,4 +39,13 @@ public class VehicleLocationController {
                 vehicleNumber
         );
     }
+
+    @GetMapping("/latest/{vehicleNumber}")
+    public VehicleLocation getLatestLocation(
+        @PathVariable String vehicleNumber
+    ) {
+        return service.getLatestLocation(
+            vehicleNumber
+        );
+     }
 }
