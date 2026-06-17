@@ -21,6 +21,8 @@ public class Alert {
 
     private Boolean isRead;
 
+    private String priority;
+
     public Alert() {
     }
 
@@ -66,5 +68,13 @@ public class Alert {
 
     public void setIsRead(Boolean isRead) {
         this.isRead = isRead;
+    }
+
+    public String getPriority() {
+        return priority;
+    }
+
+    public void setPriority(String priority) {
+        this.priority = priority;
     }
 }

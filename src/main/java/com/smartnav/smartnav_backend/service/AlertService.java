@@ -5,6 +5,7 @@ import com.smartnav.smartnav_backend.repository.AlertRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.List;
 
 @Service
@@ -19,37 +20,59 @@ public class AlertService {
     }
 
     public Alert createAlert(
-            String vehicleNumber,
-            String alertType,
-            String message
-    ) {
+        String vehicleNumber,
+        String alertType,
+        String message,
+        String priority
+) {
 
-        Alert alert = new Alert();
+    Optional<Alert> existingAlert =
+            alertRepository
+                    .findTopByVehicleNumberAndAlertTypeOrderByCreatedTimeDesc(
+                            vehicleNumber,
+                            alertType
+                    );
 
-        alert.setVehicleNumber(
-                vehicleNumber
-        );
+    if (existingAlert.isPresent()) {
 
-        alert.setAlertType(
-                alertType
-        );
+        Alert lastAlert = existingAlert.get();
 
-        alert.setMessage(
-                message
-        );
+        if (lastAlert.getMessage().equals(message)) {
 
-        alert.setCreatedTime(
-                LocalDateTime.now()
-        );
+            System.out.println(
+                    "Duplicate alert ignored"
+            );
 
-        alert.setIsRead(
-                false
-        );
-
-        return alertRepository.save(
-                alert
-        );
+            return lastAlert;
+        }
     }
+
+    Alert alert = new Alert();
+
+    alert.setVehicleNumber(
+            vehicleNumber
+    );
+
+    alert.setAlertType(
+            alertType
+    );
+
+    alert.setMessage(
+            message
+    );
+
+    alert.setCreatedTime(
+            LocalDateTime.now()
+    );
+
+    alert.setIsRead(false);
+
+    alert.setPriority(priority);
+
+    return alertRepository.save(
+            alert
+    );
+}
 
     public List<Alert> getAlerts(
             String vehicleNumber
@@ -59,5 +82,21 @@ public class AlertService {
                 .findByVehicleNumberOrderByCreatedTimeDesc(
                         vehicleNumber
                 );
+    }
+
+    public long getUnreadCount(String vehicleNumber){
+
+        return alertRepository
+            .countByVehicleNumberAndIsReadFalse(
+                    vehicleNumber
+            );
+    }
+
+    public void markAsRead(Long id){
+        Alert alert = alertRepository.findById(id).orElseThrow();
+
+        alert.setIsRead(true);
+
+        alertRepository.save(alert);
     }
 }

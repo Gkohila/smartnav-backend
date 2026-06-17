@@ -141,7 +141,8 @@ public class StopService {
                         "Bus "
                                 + stop.getVehicleNumber()
                                 + " delayed at "
-                                + nearbyStop.getStopName()
+                                + nearbyStop.getStopName(),
+                        "HIGH"
                 );
 
             } else {
