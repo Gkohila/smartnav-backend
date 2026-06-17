@@ -6,12 +6,10 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.smartnav.smartnav_backend.security.JwtService;
 
 import com.smartnav.smartnav_backend.entity.User;
 import com.smartnav.smartnav_backend.repository.UserRepository;
 import com.smartnav.smartnav_backend.security.JwtService;
-
 
 @Service
 public class UserService {
@@ -19,14 +17,15 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private JwtService jwtService;
+
     public User registerUser(User user) {
 
         user.setCreatedAt(LocalDateTime.now());
 
         return userRepository.save(user);
     }
-    @Autowired
-    private JwtService jwtService;
 
     public String loginUser(User user) {
 
@@ -45,8 +44,7 @@ public class UserService {
         return "Invalid Email or Password";
     }
 
-
     public List<User> getAllUsers() {
-       return userRepository.findAll();
+        return userRepository.findAll();
     }
 }
