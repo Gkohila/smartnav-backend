@@ -38,6 +38,7 @@ public class RouteController {
                 source,
                 destination
         );
+    }
 
     // GET Route By Id
     @GetMapping("/{id}")
