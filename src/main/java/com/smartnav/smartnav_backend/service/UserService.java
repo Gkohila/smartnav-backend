@@ -1,13 +1,15 @@
 package com.smartnav.smartnav_backend.service;
 
-import com.smartnav.smartnav_backend.entity.User;
-import com.smartnav.smartnav_backend.repository.UserRepository;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-import java.util.Optional;
-import java.util.List;
+import com.smartnav.smartnav_backend.entity.User;
+import com.smartnav.smartnav_backend.repository.UserRepository;
+import com.smartnav.smartnav_backend.security.JwtService;
 
 
 @Service
@@ -22,6 +24,8 @@ public class UserService {
 
         return userRepository.save(user);
     }
+    @Autowired
+    private JwtService jwtService;
 
     public String loginUser(User user) {
 

@@ -38,5 +38,24 @@ public class RouteController {
                 source,
                 destination
         );
+
+    // GET Route By Id
+    @GetMapping("/{id}")
+    public Route getRouteById(@PathVariable Long id) {
+        return routeService.getRouteById(id);
+    }
+
+    // UPDATE Route
+    @PutMapping("/{id}")
+    public Route updateRoute(@PathVariable Long id,
+                             @RequestBody Route route) {
+        return routeService.updateRoute(id, route);
+    }
+
+    // DELETE Route
+    @DeleteMapping("/{id}")
+    public String deleteRoute(@PathVariable Long id) {
+        routeService.deleteRoute(id);
+        return "Route Deleted Successfully";
     }
 }
