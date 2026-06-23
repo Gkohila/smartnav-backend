@@ -20,4 +20,26 @@ public class Bus {
     private String destination;
 
     private String status;
+
+    private Integer duration;
+
+    private Integer walkingDistance;
+
+    private Integer transferCount;
+
+    private String departureTime;
+
+    private String arrivalTime;
+
+    private String transportMode;
+
+    private Integer fare;
+
+    public Integer getFare() {
+        return fare;
+    }
+
+    public void setFare(Integer fare) {
+        this.fare = fare;
+    }
 }
