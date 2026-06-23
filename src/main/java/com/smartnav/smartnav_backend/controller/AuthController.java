@@ -1,15 +1,20 @@
 package com.smartnav.smartnav_backend.controller;
 
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.smartnav.smartnav_backend.dto.SendOtpRequest;
 import com.smartnav.smartnav_backend.dto.VerifyOtpRequest;
 import com.smartnav.smartnav_backend.entity.User;
 import com.smartnav.smartnav_backend.service.OtpService;
 import com.smartnav.smartnav_backend.service.UserService;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -17,7 +22,7 @@ import java.util.List;
 public class AuthController {
 
     @Autowired
-    private UserService userService;    
+    private UserService userService;
 
     @Autowired
     private OtpService otpService;
@@ -37,6 +42,36 @@ public class AuthController {
         );
 
         if (verified) {
+
+            User user = userService
+                    .getUserByMobile(request.getMobile())
+                    .orElse(null);
+
+            if (user == null) {
+
+                User newUser = new User();
+
+                newUser.setMobile(
+                        request.getMobile()
+                );
+
+                newUser.setName(
+                        "Guest User"
+                );
+
+                newUser.setBio(
+                        "Add your bio"
+                );
+
+                newUser.setProfileImage(
+                        null
+                );
+
+                userService.saveUser(
+                        newUser
+                );
+            }
+
             return "Login Success";
         }
 
