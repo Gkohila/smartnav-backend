@@ -28,23 +28,4 @@ public class Bus {
     private String destination;
 
     private String status;
-
-    @Column(name = "departure_time")
-    private String departureTime;
-
-    @Column(name = "arrival_time")
-    private String arrivalTime;
-
-    private Integer duration;
-
-    private Double fare;
-
-    @Column(name = "transport_mode")
-    private String transportMode;
-
-    @Column(name = "walking_distance")
-    private Integer walkingDistance;
-
-    @Column(name = "transfer_count")
-    private Integer transferCount;
 }

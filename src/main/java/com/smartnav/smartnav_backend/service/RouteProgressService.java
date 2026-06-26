@@ -119,7 +119,8 @@ public class RouteProgressService {
                 "ROUTE_DEVIATION",
                 "Bus "
                     + vehicleNumber
-                    + " deviated from assigned route"
+                    + " deviated from assigned route", 
+                "HIGH"
             );
         } else {
             progress.setRouteDeviation(false);
@@ -183,7 +184,8 @@ public class RouteProgressService {
                         "APPROACHING_DESTINATION",
                         "Bus "
                         + vehicleNumber
-                        + " will reach destination in 15 minutes"
+                        + " will reach destination in 15 minutes", 
+                        "MEDIUM"
                 );
         }
 
@@ -194,7 +196,8 @@ public class RouteProgressService {
                         "APPROACHING_DESTINATION",
                         "Bus "
                         + vehicleNumber
-                        + " will reach destination in 10 minutes"
+                        + " will reach destination in 10 minutes", 
+                        "MEDIUM"
                 );
         }
 
@@ -205,7 +208,8 @@ public class RouteProgressService {
                         "APPROACHING_DESTINATION",
                         "Bus "
                         + vehicleNumber
-                        + " will reach destination in 5 minutes"
+                        + " will reach destination in 5 minutes", 
+                        "HIGH"
                 );
         }
 
@@ -228,7 +232,8 @@ public class RouteProgressService {
                         "Bus "
                         + vehicleNumber
                         + " reached "
-                        + progress.getDestinationStop()
+                        + progress.getDestinationStop(), 
+                        "HIGH"
                 );
 
         } else {

@@ -28,4 +28,22 @@ public class AlertController {
                 vehicleNumber
         );
     }
+
+    @GetMapping("/{vehicleNumber}/unread-count")
+    public long getUnreadCount(
+            @PathVariable String vehicleNumber
+    ) {
+
+        return alertService.getUnreadCount(
+                vehicleNumber
+        );
+    }
+
+    @PutMapping("/{id}/read")
+    public void markAsRead(
+            @PathVariable Long id
+    ) {
+
+        alertService.markAsRead(id);
+    }
 }

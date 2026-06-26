@@ -26,6 +26,13 @@ public class UserService {
 
         return userRepository.save(user);
     }
+    public Optional<User> getUserByMobile(String mobile) {
+        return userRepository.findByMobile(mobile);
+    }
+    
+    public User saveUser(User user) {
+        return userRepository.save(user);
+    }
 
     public String loginUser(User user) {
 
@@ -44,20 +51,8 @@ public class UserService {
         return "Invalid Email or Password";
     }
 
-    // Find user using mobile number
-    public Optional<User> getUserByMobile(String mobile) {
-
-        return userRepository.findByMobile(mobile);
-    }
-
-    // Save updated profile
-    public User saveUser(User user) {
-
-        return userRepository.save(user);
-    }
 
     public List<User> getAllUsers() {
-
-        return userRepository.findAll();
+       return userRepository.findAll();
     }
 }
