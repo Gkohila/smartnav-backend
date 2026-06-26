@@ -1,24 +1,37 @@
 package com.smartnav.smartnav_backend.service;
 
-import com.smartnav.smartnav_backend.entity.Route;
-import com.smartnav.smartnav_backend.repository.RouteRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import com.smartnav.smartnav_backend.entity.Route;
+import com.smartnav.smartnav_backend.repository.RouteRepository;
 
 @Service
 public class RouteService {
 
-    @Autowired
-    private RouteRepository routeRepository;
+    private final RouteRepository routeRepository;
+
+    public RouteService(RouteRepository routeRepository) {
+        this.routeRepository = routeRepository;
+    }
+
+    public List<Route> getAllRoutes() {
+        return routeRepository.findAll();
+    }
 
     public Route saveRoute(Route route) {
         return routeRepository.save(route);
     }
 
-    public List<Route> getAllRoutes() {
-        return routeRepository.findAll();
+    public List<Route> searchRoutes(
+            String source,
+            String destination
+    ) {
+        return routeRepository.findBySourceAndDestination(
+                source,
+                destination
+        );
     }
 
     public Route getRouteById(Long id) {

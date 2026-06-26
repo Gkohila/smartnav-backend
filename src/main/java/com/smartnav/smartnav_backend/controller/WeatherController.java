@@ -9,35 +9,23 @@ import org.springframework.web.bind.annotation.RestController;
 import com.smartnav.smartnav_backend.dto.WeatherResponse;
 import com.smartnav.smartnav_backend.service.WeatherService;
 
-@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/weather")
+@CrossOrigin(origins = "*")
 public class WeatherController {
 
     private final WeatherService weatherService;
 
-    public WeatherController(
-            WeatherService weatherService) {
-
+    public WeatherController(WeatherService weatherService) {
         this.weatherService = weatherService;
     }
 
-    @GetMapping("/test")
-    public String test() {
-
-        return weatherService.getApiKey();
-    }
-
     @GetMapping("/current")
-    public WeatherResponse currentWeather(
+    public WeatherResponse getCurrentWeather(
             @RequestParam double lat,
             @RequestParam double lon,
-            @RequestParam(defaultValue = "en")
-            String lang) {
+            @RequestParam(defaultValue = "en") String lang) {
 
-        return weatherService.getWeather(
-                lat,
-                lon,
-                lang);
+        return weatherService.getWeather(lat, lon, lang);
     }
 }

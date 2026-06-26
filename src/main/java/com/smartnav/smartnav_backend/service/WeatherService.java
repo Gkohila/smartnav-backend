@@ -21,72 +21,85 @@ public class WeatherService {
     @Value("${openweather.api.key}")
     private String apiKey;
 
-    public String getApiKey() {
-        return apiKey;
-    }
-
     public WeatherResponse getWeather(
             double lat,
             double lon,
             String lang) {
 
-        String url =
-                "https://api.openweathermap.org/data/2.5/weather"
-                        + "?lat=" + lat
-                        + "&lon=" + lon
-                        + "&units=metric"
-                        + "&lang=" + lang
-                        + "&appid=" + apiKey;
-
-        RestTemplate restTemplate =
-                new RestTemplate();
-
-        String response =
-                restTemplate.getForObject(
-                        url,
-                        String.class);
-
         try {
+
+            System.out.println("LAT = " + lat);
+            System.out.println("LON = " + lon);
+
+            String weatherUrl =
+                    "https://api.openweathermap.org/data/2.5/weather"
+                            + "?lat=" + lat
+                            + "&lon=" + lon
+                            + "&units=metric"
+                            + "&lang=" + lang
+                            + "&appid=" + apiKey;
+
+            RestTemplate restTemplate = new RestTemplate();
+
+            String weatherJson =
+                    restTemplate.getForObject(
+                            weatherUrl,
+                            String.class);
 
             ObjectMapper mapper =
                     new ObjectMapper();
 
             JsonNode root =
-                    mapper.readTree(response);
+                    mapper.readTree(weatherJson);
 
+                    double temperature =
+                    root.path("main")
+                            .path("temp")
+                            .asDouble();
+            
+            String weather =
+                    root.path("weather")
+                            .get(0)
+                            .path("description")
+                            .asText();
+            
+            // OpenWeather city name
+            String city =
+                    root.path("name")
+                            .asText();
+            
+            String currentTime =
+                    LocalTime.now().format(
+                            DateTimeFormatter.ofPattern(
+                                    "hh:mm a"));
+            
+            // Reverse Geocoding location
             String location =
                     getCurrentLocation(
                             lat,
                             lon);
-
-            double temperature =
-                    root.get("main")
-                            .get("temp")
-                            .asDouble();
-
-            String weather =
-                    root.get("weather")
-                            .get(0)
-                            .get("description")
-                            .asText();
-
-            String currentTime =
-                    LocalTime.now()
-                            .format(
-                                    DateTimeFormatter.ofPattern(
-                                            "hh:mm a"));
-
+            
+            // Fallback
+            if ("Unknown".equals(location) || location.isBlank()) {
+                location = city;
+            }
+            
             return new WeatherResponse(
                     location,
                     temperature,
                     weather,
                     currentTime);
-
         } catch (Exception e) {
 
-            throw new RuntimeException(
-                    "Failed to parse weather data",
-                    e);
+            e.printStackTrace();
+
+            return new WeatherResponse(
+                    "Unknown",
+                    0,
+                    "Unavailable",
+                    LocalTime.now().format(
+                            DateTimeFormatter.ofPattern(
+                                    "hh:mm a")));
         }
     }
 
@@ -98,7 +111,7 @@ public class WeatherService {
 
             String url =
                     "https://nominatim.openstreetmap.org/reverse"
-                            + "?format=json"
+                            + "?format=jsonv2"
                             + "&lat=" + lat
                             + "&lon=" + lon;
 
@@ -122,6 +135,9 @@ public class WeatherService {
                             entity,
                             String.class);
 
+            System.out.println("REVERSE JSON:");
+            System.out.println(response.getBody());
+
             ObjectMapper mapper =
                     new ObjectMapper();
 
@@ -130,30 +146,54 @@ public class WeatherService {
                             response.getBody());
 
             JsonNode address =
-                    root.get("address");
+                    root.path("address");
 
-            if (address != null) {
+            String[] fields = {
+                    "suburb",
+                    "hamlet",
+                    "village",
+                    "town",
+                    "city",
+                    "municipality",
+                    "neighbourhood",
+                    "county",
+                    "state_district",
+                    "state"
+            };
 
-                if (address.has("village")) {
-                    return address.get("village").asText();
+            for (String field : fields) {
+
+                if (address.has(field)) {
+
+                    String place =
+                            address.get(field)
+                                    .asText();
+
+                    System.out.println(
+                            "FOUND LOCATION = " + place);
+
+                    return place;
                 }
+            }
 
-                if (address.has("town")) {
-                    return address.get("town").asText();
-                }
+            if (root.has("display_name")) {
 
-                if (address.has("suburb")) {
-                    return address.get("suburb").asText();
-                }
+                String display =
+                        root.get("display_name")
+                                .asText();
 
-                if (address.has("city")) {
-                    return address.get("city").asText();
-                }
+                System.out.println(
+                        "DISPLAY NAME = "
+                                + display);
+
+                return display.split(",")[0];
             }
 
             return "Unknown";
 
         } catch (Exception e) {
+
+            e.printStackTrace();
 
             return "Unknown";
         }
