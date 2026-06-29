@@ -15,4 +15,8 @@ public interface SavedRouteRepository
     boolean existsByUserIdAndVehicleNumber(
                 Long userId,
                 String vehicleNumber);
+
+                void deleteByUserId(Long userId);
+
+                
 }

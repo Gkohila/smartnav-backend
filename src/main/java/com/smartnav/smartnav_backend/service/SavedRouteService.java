@@ -75,4 +75,10 @@ public class SavedRouteService {
 
         repository.deleteById(id);
     }
+
+    public void deleteAllRoutes(Long userId) {
+
+        repository.deleteByUserId(userId);
+    
+    }
 }

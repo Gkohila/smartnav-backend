@@ -59,4 +59,11 @@ public boolean isRouteSaved(
 
         service.deleteRoute(id);
     }
+
+    @DeleteMapping("/user/{userId}")
+public void deleteAllRoutes(
+        @PathVariable Long userId) {
+
+    service.deleteAllRoutes(userId);
+}
 }
