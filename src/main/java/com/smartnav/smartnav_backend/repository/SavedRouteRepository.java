@@ -11,4 +11,8 @@ public interface SavedRouteRepository
 
     List<SavedRoute> findByUserIdOrderByCreatedAtDesc(
             Long userId);
+    
+    boolean existsByUserIdAndVehicleNumber(
+                Long userId,
+                String vehicleNumber);
 }

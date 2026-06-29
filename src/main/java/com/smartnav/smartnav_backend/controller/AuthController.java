@@ -1,6 +1,8 @@
 package com.smartnav.smartnav_backend.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -34,12 +36,14 @@ public class AuthController {
     }
 
     @PostMapping("/verify-otp")
-    public String verifyOtp(@RequestBody VerifyOtpRequest request) {
+    public Map<String, Object> verifyOtp(
+            @RequestBody VerifyOtpRequest request) {
+
+        Map<String, Object> response = new HashMap<>();
 
         boolean verified = otpService.verifyOtp(
                 request.getMobile(),
-                request.getOtp()
-        );
+                request.getOtp());
 
         if (verified) {
 
@@ -51,31 +55,23 @@ public class AuthController {
 
                 User newUser = new User();
 
-                newUser.setMobile(
-                        request.getMobile()
-                );
+                newUser.setMobile(request.getMobile());
+                newUser.setName("Guest User");
+                newUser.setBio("Add your bio");
+                newUser.setProfileImage(null);
 
-                newUser.setName(
-                        "Guest User"
-                );
-
-                newUser.setBio(
-                        "Add your bio"
-                );
-
-                newUser.setProfileImage(
-                        null
-                );
-
-                userService.saveUser(
-                        newUser
-                );
+                user = userService.saveUser(newUser);
             }
 
-            return "Login Success";
+            response.put("message", "Login Success");
+            response.put("userId", user.getId());
+
+            return response;
         }
 
-        return "Invalid OTP";
+        response.put("message", "Invalid OTP");
+
+        return response;
     }
 
     @PostMapping("/register")

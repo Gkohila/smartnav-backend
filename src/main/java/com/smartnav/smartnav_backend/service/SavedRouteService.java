@@ -60,6 +60,16 @@ public class SavedRouteService {
                         userId);
     }
 
+    public boolean isRouteSaved(
+        Long userId,
+        String vehicleNumber) {
+
+    return repository.existsByUserIdAndVehicleNumber(
+            userId,
+            vehicleNumber);
+}
+
+
     public void deleteRoute(
             Long id) {
 
