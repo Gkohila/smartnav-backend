@@ -1,5 +1,15 @@
 package com.smartnav.smartnav_backend.controller;
 
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.smartnav.smartnav_backend.dto.SendOtpRequest;
 import com.smartnav.smartnav_backend.dto.VerifyOtpRequest;
 import com.smartnav.smartnav_backend.entity.User;
@@ -8,9 +18,6 @@ import com.smartnav.smartnav_backend.service.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
 
 import java.util.List;
 
@@ -20,7 +27,7 @@ import java.util.List;
 public class AuthController {
 
     @Autowired
-    private UserService userService;    
+    private UserService userService;
 
     @Autowired
     private OtpService otpService;
@@ -42,36 +49,13 @@ public Map<String, Object> verifyOtp(
 
     Map<String, Object> response = new HashMap<>();
 
-    if (verified) {
+        if (verified) {
+            return "Login Success";
+        }
 
-        Optional<User> user =
-                userService.findByMobile(
-                        request.getMobile());
-        System.out.println("USER FOUND = " + user.isPresent());
-
-        response.put("message", "Login Success");
-
-        if (user.isPresent()) {
-
-    System.out.println("USER ID = " + user.get().getId());
-    System.out.println("MOBILE = " + user.get().getMobile());
-
-    response.put("userId",
-            user.get().getId());
-
-    response.put("mobile",
-            user.get().getMobile());
-}
-else {
-
-    System.out.println("USER NOT FOUND");
-}
-        return response;
+        return "Invalid OTP";
     }
 
-    response.put("message", "Invalid OTP");
-    return response;
-}
     @PostMapping("/register")
     public User register(@RequestBody User user) {
 
