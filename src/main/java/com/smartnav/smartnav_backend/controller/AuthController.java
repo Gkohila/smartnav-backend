@@ -18,8 +18,11 @@ import com.smartnav.smartnav_backend.service.UserService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.Optional;
+
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -38,7 +41,7 @@ public class AuthController {
         return otpService.sendOtp(request.getMobile());
     }
 
-   @PostMapping("/verify-otp")
+  @PostMapping("/verify-otp")
 public Map<String, Object> verifyOtp(
         @RequestBody VerifyOtpRequest request) {
 
@@ -49,12 +52,24 @@ public Map<String, Object> verifyOtp(
 
     Map<String, Object> response = new HashMap<>();
 
-        if (verified) {
-            return "Login Success";
+    if (verified) {
+
+        Optional<User> user =
+                userService.findByMobile(request.getMobile());
+
+        response.put("message", "Login Success");
+
+        if (user.isPresent()) {
+            response.put("userId", user.get().getId());
+            response.put("mobile", user.get().getMobile());
         }
 
-        return "Invalid OTP";
+        return response;
     }
+
+    response.put("message", "Invalid OTP");
+    return response;
+}
 
     @PostMapping("/register")
     public User register(@RequestBody User user) {
