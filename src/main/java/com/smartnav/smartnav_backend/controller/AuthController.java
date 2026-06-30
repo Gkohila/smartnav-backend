@@ -31,7 +31,6 @@ public class AuthController {
 
     @PostMapping("/send-otp")
     public String sendOtp(@RequestBody SendOtpRequest request) {
-
         return otpService.sendOtp(request.getMobile());
     }
 
@@ -54,7 +53,6 @@ public class AuthController {
             if (user == null) {
 
                 User newUser = new User();
-
                 newUser.setMobile(request.getMobile());
                 newUser.setName("Guest User");
                 newUser.setBio("Add your bio");
@@ -65,30 +63,27 @@ public class AuthController {
 
             response.put("message", "Login Success");
             response.put("userId", user.getId());
+            response.put("mobile", user.getMobile());
 
             return response;
         }
 
         response.put("message", "Invalid OTP");
-
         return response;
     }
 
     @PostMapping("/register")
     public User register(@RequestBody User user) {
-
         return userService.registerUser(user);
     }
 
     @PostMapping("/login")
     public String login(@RequestBody User user) {
-
         return userService.loginUser(user);
     }
 
     @GetMapping("/users")
     public List<User> getAllUsers() {
-
         return userService.getAllUsers();
     }
 }

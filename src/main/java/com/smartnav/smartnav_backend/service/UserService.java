@@ -55,4 +55,9 @@ public class UserService {
     public List<User> getAllUsers() {
        return userRepository.findAll();
     }
+
+    public Optional<User> findByMobile(String mobile) {
+    return userRepository.findByMobile(mobile);
+}
+    
 }
