@@ -2,7 +2,15 @@ package com.smartnav.smartnav_backend.controller;
 
 import java.util.List;
 
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.smartnav.smartnav_backend.dto.SavedRouteRequest;
 import com.smartnav.smartnav_backend.entity.SavedRoute;
@@ -15,9 +23,7 @@ public class SavedRouteController {
 
     private final SavedRouteService service;
 
-    public SavedRouteController(
-            SavedRouteService service) {
-
+    public SavedRouteController(SavedRouteService service) {
         this.service = service;
     }
 
@@ -35,10 +41,31 @@ public class SavedRouteController {
         return service.getSavedRoutes(userId);
     }
 
+    @GetMapping("/exists")
+    public boolean isRouteSaved(
+            @RequestParam Long userId,
+            @RequestParam String source,
+            @RequestParam String destination,
+            @RequestParam String transportMode) {
+
+        return service.isRouteSaved(
+                userId,
+                source,
+                destination,
+                transportMode);
+    }
+
     @DeleteMapping("/{id}")
     public void deleteRoute(
             @PathVariable Long id) {
 
         service.deleteRoute(id);
+    }
+
+    @DeleteMapping("/user/{userId}")
+    public void deleteAllRoutes(
+            @PathVariable Long userId) {
+
+        service.deleteAllRoutes(userId);
     }
 }
