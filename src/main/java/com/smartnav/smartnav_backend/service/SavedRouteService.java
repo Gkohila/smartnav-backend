@@ -14,71 +14,51 @@ public class SavedRouteService {
 
     private final SavedRouteRepository repository;
 
-    public SavedRouteService(
-            SavedRouteRepository repository) {
-
+    public SavedRouteService(SavedRouteRepository repository) {
         this.repository = repository;
     }
 
-    public SavedRoute saveRoute(
-            SavedRouteRequest request) {
+    public SavedRoute saveRoute(SavedRouteRequest request) {
 
-        SavedRoute route =
-                new SavedRoute();
+        SavedRoute route = new SavedRoute();
 
         route.setUserId(request.getUserId());
-        route.setVehicleNumber(
-                request.getVehicleNumber());
-        route.setBusName(
-                request.getBusName());
-        route.setSource(
-                request.getSource());
-        route.setDestination(
-                request.getDestination());
-        route.setDepartureTime(
-                request.getDepartureTime());
-        route.setArrivalTime(
-                request.getArrivalTime());
-        route.setDuration(
-                request.getDuration());
-        route.setFare(
-                request.getFare());
-        route.setTransportMode(
-                request.getTransportMode());
-
-        route.setCreatedAt(
-                LocalDateTime.now());
+        route.setVehicleNumber(request.getVehicleNumber());
+        route.setBusName(request.getBusName());
+        route.setSource(request.getSource().trim());
+        route.setDestination(request.getDestination().trim());
+        route.setDepartureTime(request.getDepartureTime());
+        route.setArrivalTime(request.getArrivalTime());
+        route.setDuration(request.getDuration());
+        route.setFare(request.getFare());
+        route.setTransportMode(request.getTransportMode().trim());
+        route.setCreatedAt(LocalDateTime.now());
 
         return repository.save(route);
     }
 
-    public List<SavedRoute> getSavedRoutes(
-            Long userId) {
-
-        return repository
-                .findByUserIdOrderByCreatedAtDesc(
-                        userId);
+    public List<SavedRoute> getSavedRoutes(Long userId) {
+        return repository.findByUserIdOrderByCreatedAtDesc(userId);
     }
 
     public boolean isRouteSaved(
-        Long userId,
-        String vehicleNumber) {
+            Long userId,
+            String source,
+            String destination,
+            String transportMode) {
 
-    return repository.existsByUserIdAndVehicleNumber(
-            userId,
-            vehicleNumber);
-}
+        return repository.existsByUserIdAndSourceAndDestinationAndTransportMode(
+                userId,
+                source.trim(),
+                destination.trim(),
+                transportMode.trim());
+    }
 
-
-    public void deleteRoute(
-            Long id) {
-
+    public void deleteRoute(Long id) {
         repository.deleteById(id);
     }
 
     public void deleteAllRoutes(Long userId) {
-
-        repository.deleteByUserId(userId);
-    
+        repository.deleteAllByUserId(userId);
     }
 }

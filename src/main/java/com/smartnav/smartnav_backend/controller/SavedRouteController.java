@@ -23,9 +23,7 @@ public class SavedRouteController {
 
     private final SavedRouteService service;
 
-    public SavedRouteController(
-            SavedRouteService service) {
-
+    public SavedRouteController(SavedRouteService service) {
         this.service = service;
     }
 
@@ -44,14 +42,18 @@ public class SavedRouteController {
     }
 
     @GetMapping("/exists")
-public boolean isRouteSaved(
-        @RequestParam Long userId,
-        @RequestParam String vehicleNumber) {
+    public boolean isRouteSaved(
+            @RequestParam Long userId,
+            @RequestParam String source,
+            @RequestParam String destination,
+            @RequestParam String transportMode) {
 
-    return service.isRouteSaved(
-            userId,
-            vehicleNumber);
-}
+        return service.isRouteSaved(
+                userId,
+                source,
+                destination,
+                transportMode);
+    }
 
     @DeleteMapping("/{id}")
     public void deleteRoute(
@@ -61,9 +63,9 @@ public boolean isRouteSaved(
     }
 
     @DeleteMapping("/user/{userId}")
-public void deleteAllRoutes(
-        @PathVariable Long userId) {
+    public void deleteAllRoutes(
+            @PathVariable Long userId) {
 
-    service.deleteAllRoutes(userId);
-}
+        service.deleteAllRoutes(userId);
+    }
 }
