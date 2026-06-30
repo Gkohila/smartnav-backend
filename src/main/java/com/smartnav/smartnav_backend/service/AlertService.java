@@ -3,6 +3,7 @@ package com.smartnav.smartnav_backend.service;
 import com.smartnav.smartnav_backend.entity.Alert;
 import com.smartnav.smartnav_backend.repository.AlertRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -74,15 +75,17 @@ public class AlertService {
     );
 }
 
-    public List<Alert> getAlerts(
-            String vehicleNumber
-    ) {
+    public List<Alert> getAlerts(String vehicleNumber) {
 
-        return alertRepository
-                .findByVehicleNumberOrderByCreatedTimeDesc(
-                        vehicleNumber
-                );
-    }
+    System.out.println("Vehicle = " + vehicleNumber);
+
+    List<Alert> alerts =
+            alertRepository.findByVehicleNumberOrderByCreatedTimeDesc(vehicleNumber);
+
+    System.out.println("Alert Count = " + alerts.size());
+
+    return alerts;
+}
 
     public long getUnreadCount(String vehicleNumber){
 
@@ -99,4 +102,9 @@ public class AlertService {
 
         alertRepository.save(alert);
     }
+
+@Transactional
+public void deleteAllAlerts(String vehicleNumber) {
+    alertRepository.deleteByVehicleNumber(vehicleNumber);
+}
 }

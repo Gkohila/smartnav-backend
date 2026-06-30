@@ -3,6 +3,7 @@ package com.smartnav.smartnav_backend.controller;
 import com.smartnav.smartnav_backend.entity.Alert;
 import com.smartnav.smartnav_backend.service.AlertService;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
@@ -46,4 +47,13 @@ public class AlertController {
 
         alertService.markAsRead(id);
     }
+
+    @DeleteMapping("/{vehicleNumber}")
+public ResponseEntity<String> deleteAllAlerts(
+        @PathVariable String vehicleNumber) {
+
+    alertService.deleteAllAlerts(vehicleNumber);
+
+    return ResponseEntity.ok("Alerts deleted successfully");
+}
 }
