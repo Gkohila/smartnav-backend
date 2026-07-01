@@ -5,24 +5,13 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.smartnav.smartnav_backend.dto.SendOtpRequest;
 import com.smartnav.smartnav_backend.dto.VerifyOtpRequest;
 import com.smartnav.smartnav_backend.entity.User;
 import com.smartnav.smartnav_backend.service.OtpService;
 import com.smartnav.smartnav_backend.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Optional;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -40,9 +29,6 @@ public class AuthController {
         return otpService.sendOtp(request.getMobile());
     }
 
-  @PostMapping("/verify-otp")
-public Map<String, Object> verifyOtp(
-        @RequestBody VerifyOtpRequest request) {
     @PostMapping("/verify-otp")
     public Map<String, Object> verifyOtp(
             @RequestBody VerifyOtpRequest request) {
@@ -52,27 +38,6 @@ public Map<String, Object> verifyOtp(
         boolean verified = otpService.verifyOtp(
                 request.getMobile(),
                 request.getOtp());
-
-    Map<String, Object> response = new HashMap<>();
-
-    if (verified) {
-
-        Optional<User> user =
-                userService.findByMobile(request.getMobile());
-
-        response.put("message", "Login Success");
-
-        if (user.isPresent()) {
-            response.put("userId", user.get().getId());
-            response.put("mobile", user.get().getMobile());
-        }
-
-        return response;
-    }
-
-    response.put("message", "Invalid OTP");
-    return response;
-}
 
         if (verified) {
 
