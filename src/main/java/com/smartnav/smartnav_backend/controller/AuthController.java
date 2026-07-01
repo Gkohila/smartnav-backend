@@ -84,11 +84,7 @@ public Map<String, Object> verifyOtp(
                         newUser
                 );
             }
-
-            return "Login Success";
         }
-
-    Map<String, Object> response = new HashMap<>();
 
     if (verified) {
 
