@@ -5,28 +5,13 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.smartnav.smartnav_backend.dto.SendOtpRequest;
 import com.smartnav.smartnav_backend.dto.VerifyOtpRequest;
 import com.smartnav.smartnav_backend.entity.User;
 import com.smartnav.smartnav_backend.service.OtpService;
 import com.smartnav.smartnav_backend.service.UserService;
-
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-
-import java.util.List;
-
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -44,10 +29,8 @@ public class AuthController {
         return otpService.sendOtp(request.getMobile());
     }
 
-   @PostMapping("/verify-otp")
-public Map<String, Object> verifyOtp(
-        @RequestBody VerifyOtpRequest request) {
-
+    @PostMapping("/verify-otp")
+    public Map<String, Object> verifyOtp(@RequestBody VerifyOtpRequest request) {
         Map<String, Object> response = new HashMap<>();
 
         boolean verified = otpService.verifyOtp(
@@ -55,67 +38,31 @@ public Map<String, Object> verifyOtp(
                 request.getOtp());
 
         if (verified) {
-
             User user = userService
                     .getUserByMobile(request.getMobile())
                     .orElse(null);
 
             if (user == null) {
-
                 User newUser = new User();
+                newUser.setMobile(request.getMobile());
+                newUser.setName("Guest User");
+                newUser.setBio("Add your bio");
+                newUser.setProfileImage(null);
 
-                newUser.setMobile(
-                        request.getMobile()
-                );
-
-                newUser.setName(
-                        "Guest User"
-                );
-
-                newUser.setBio(
-                        "Add your bio"
-                );
-
-                newUser.setProfileImage(
-                        null
-                );
-
-                userService.saveUser(
-                        newUser
-                );
+                user = userService.saveUser(newUser);
             }
+
+            response.put("message", "Login Success");
+            response.put("userId", user.getId());
+            response.put("mobile", user.getMobile());
+
+            return response;
         }
 
-    if (verified) {
-
-        Optional<User> user =
-                userService.findByMobile(
-                        request.getMobile());
-        System.out.println("USER FOUND = " + user.isPresent());
-
-        response.put("message", "Login Success");
-
-        if (user.isPresent()) {
-
-    System.out.println("USER ID = " + user.get().getId());
-    System.out.println("MOBILE = " + user.get().getMobile());
-
-    response.put("userId",
-            user.get().getId());
-
-    response.put("mobile",
-            user.get().getMobile());
-}
-else {
-
-    System.out.println("USER NOT FOUND");
-}
+        response.put("message", "Invalid OTP");
         return response;
     }
 
-    response.put("message", "Invalid OTP");
-    return response;
-}
     @PostMapping("/register")
     public User register(@RequestBody User user) {
         return userService.registerUser(user);
