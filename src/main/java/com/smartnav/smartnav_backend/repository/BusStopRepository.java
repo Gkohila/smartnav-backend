@@ -8,5 +8,7 @@ import java.util.List;
 public interface BusStopRepository extends JpaRepository<BusStop, Long> {
 
     List<BusStop> findByBusNumberOrderByStopOrder(String busNumber);
+    List<BusStop> findByStopNameIgnoreCase(String stopName);
+    List<BusStop> findAllByOrderByBusNumberAscStopOrderAsc();
 
 }

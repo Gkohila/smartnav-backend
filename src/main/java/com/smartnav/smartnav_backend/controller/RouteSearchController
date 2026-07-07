@@ -1,0 +1,27 @@
+package com.smartnav.smartnav_backend.controller;
+
+import com.smartnav.smartnav_backend.graph.RoutePath;
+import com.smartnav.smartnav_backend.service.RouteSearchService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("/api/routes")
+@CrossOrigin
+public class RouteSearchController {
+
+    @Autowired
+    private RouteSearchService routeSearchService;
+
+    @GetMapping("/search")
+    public RoutePath searchRoute(
+            @RequestParam String source,
+            @RequestParam String destination
+    ) {
+
+        return routeSearchService.findShortestPath(
+                source,
+                destination
+        );
+    }
+}
