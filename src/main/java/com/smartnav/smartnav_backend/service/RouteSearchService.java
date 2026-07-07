@@ -87,6 +87,10 @@ for (Bus bus : busRepository.findAll()) {
 
                 new GraphEdge(
                         current.getBusNumber(),
+                        "",          // Bus Name (temporary)
+                        0.0,         // Fare (temporary)
+                        "",          // Duration (temporary)
+                        "Bus",       // Transport Mode
                         current.getStopName(),
                         next.getStopName(),
                         current.getStopOrder()
